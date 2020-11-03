@@ -4,6 +4,7 @@ module.exports = class Player{
         this.username = username
         this.colour = colour
         this.isAlive = true
+        this.changingColour = false
     }
 
     toggleAlive(){
