@@ -5,6 +5,7 @@ module.exports = {
     Alive: require('./alive'),
     Start: require('./start'),
     Help: require('./help'),
-    End: require('./end'),
-    Disc: require('./disc')
+    Unhost: require('./unhost'),
+    Disc: require('./disc'),
+    End: require('./end')
 }
