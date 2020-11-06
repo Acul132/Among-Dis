@@ -27,6 +27,13 @@ exports.players = [];
 exports.host = "";
 exports.lobbyMessageId = "";
 exports.lobbyId = "";
+exports.lobbyStatus = ""
+
+exports.updateLobbyStatus = (newStatus, msg) => {
+    this.lobbyStatus = newStatus
+    console.log("Lobby Status: " + newStatus)
+    this.updateLobbyMessage(msg)
+}
 
 bot.login(TOKEN)
 
@@ -47,12 +54,11 @@ bot.on('message', async (msg) => {
             return
         }
         await commandRef.execute(msg, args);
+        await msg.delete()
     } catch (error) {
         msg.reply(error);
     }
 })
-
-let changingColour = false;
 
 bot.on('messageReactionAdd', async (reaction, user) => {
     if(user.bot || !this.lobbyMessageId || this.lobbyMessageId !== reaction.message.id) return
@@ -79,7 +85,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
         this.players.push(new Player(user.id, user.username, playerColour))
     }
 
-    sendLobbyMessage(reaction.message)
+    this.updateLobbyMessage(reaction.message)
 })
 
 bot.on('messageReactionRemove', (reaction, user) => {
@@ -94,12 +100,13 @@ bot.on('messageReactionRemove', (reaction, user) => {
         this.players = this.players.filter(player => player.id !== user.id)
     }
     
-    sendLobbyMessage(reaction.message)
+    this.updateLobbyMessage(reaction.message)
 })
 
-const sendLobbyMessage = async msgRef => {
-    let messageContent = `Lobby Code: ${this.lobbyId}\nPlease react to select your colour! \n\n`
+exports.updateLobbyMessage = async (msg) => {
+    const lobbyMsgRef = msg.channel.messages.cache.get(this.lobbyMessageId)
+    let messageContent = `Lobby Code: ${this.lobbyId}\nCurrent Phase: ${this.lobbyStatus}\nPlease react to select your colour!\n\n`
     this.players.map(player => messageContent += `${player.username} has selected -> ${player.colour}\n`)
-    await msgRef.edit(messageContent)
+    await lobbyMsgRef.edit(messageContent)
 }
 

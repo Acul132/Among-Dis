@@ -3,7 +3,7 @@ module.exports = {
     description: 'Start the game',
     hostPermission: true,
     async execute(msg, args){
-        const { players } = require('../bot')
+        const { players, updateLobbyStatus } = require('../bot')
         const { guild } = msg
 
         for(let player of players){
@@ -14,5 +14,7 @@ module.exports = {
                 console.log(err)
             }
         }
+
+        updateLobbyStatus("Playing", msg)
     }
 }

@@ -12,5 +12,13 @@ module.exports = {
             bot.lobbyId = ""
             bot.host = ""
         }
+        for(let player of players){
+            try{
+                await guild.members.cache.get(player.id).edit({mute: false})
+            }
+            catch(err){
+                console.log(err)
+            }
+        }
     }
 }
