@@ -3,7 +3,7 @@ module.exports = {
     description: 'End the game',
     hostPermission: true,
     async execute(msg, args){
-        const { players, updateLobbyStatus } = require('../bot')
+        const { players, updateLobbyPhase } = require('../bot')
         const { guild } = msg
 
         for(let player of players){
@@ -16,6 +16,6 @@ module.exports = {
             }
         }
 
-        updateLobbyStatus("End game lobby", msg)
+        updateLobbyPhase("End of round lobby", msg)
     }
 }
