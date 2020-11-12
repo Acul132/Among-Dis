@@ -12,14 +12,40 @@ const TOKEN = process.env.TOKEN;
 const prefix = '!';
 const Player = require('./player')
 
-exports.colours = {
-    '❤️' : 'RED',
-    '🧡' : 'ORANGE',
-    '💛' : 'YELLOW',
-    '💚' : 'GREEN',
-    '💙' : 'BLUE',
-    '💜' : 'PURPLE',
-    '🖤' : 'BLACK'
+exports.mapImageUrls = {
+    SKELD: "https://i.ibb.co/86G521h/SKELD.jpg",
+    POLUS: "https://i.ibb.co/YyN2sp8/POLUS.jpg",
+    MIRA: "https://i.ibb.co/mXgKLWw/MIRA.jpg"
+}
+
+exports.coloursById = {
+    '775574958255505467' : 'YELLOW',
+    '775574958042644521' : 'WHITE',
+    '775574958159953950' : 'TEAL',
+    '775574958105296906' : 'RED',
+    '775574957841186817' : 'PURPLE',
+    '775574959182839858' : 'PINK',
+    '775574957848789022' : 'ORANGE',
+    '775574957526745098' : 'LIME',
+    '775574957198540801' : 'GREEN',
+    '775574957186351124' : 'BROWN',
+    '775574956905725993' : 'BLUE',
+    '775574956745556009' : 'BLACK'
+}
+
+exports.coloursByName = {
+    'YELLOW' : '775574958255505467',
+    'WHITE' : '775574958042644521',
+    'TEAL' : '775574958159953950',
+    'RED' : '775574958105296906',
+    'PURPLE' : '775574957841186817',
+    'PINK' : '775574959182839858',
+    'ORANGE' : '775574957848789022',
+    'LIME' : '775574957526745098',
+    'GREEN' : '775574957198540801',
+    'BROWN' : '775574957186351124',
+    'BLUE' : '775574956905725993',
+    'BLACK' : '775574956745556009'
 }
 
 //Player object will look like {playerId:<string>, username:<string>, isAlive:<bool>, colour:<string>}
@@ -27,13 +53,8 @@ exports.players = [];
 exports.host = "";
 exports.lobbyMessageId = "";
 exports.lobbyId = "";
-exports.lobbyStatus = ""
-
-exports.updateLobbyStatus = (newStatus, msg) => {
-    this.lobbyStatus = newStatus
-    console.log("Lobby Status: " + newStatus)
-    this.updateLobbyMessage(msg)
-}
+exports.map = ""
+exports.lobbyPhase = ""
 
 bot.login(TOKEN)
 
@@ -63,12 +84,13 @@ bot.on('message', async (msg) => {
 bot.on('messageReactionAdd', async (reaction, user) => {
     if(user.bot || !this.lobbyMessageId || this.lobbyMessageId !== reaction.message.id) return
 
-    if(!Object.keys(this.colours).includes(reaction.emoji.name)){
+    console.log(user.id)
+    if(!Object.keys(this.coloursById).includes(reaction.emoji.id)){
         await reaction.remove()
         return
     }
         
-    const playerColour = this.colours[reaction.emoji.name]
+    const playerColour = this.coloursById[reaction.emoji.id]
 
     //Check if player object has already been created
     // if yes: change current colour
@@ -103,10 +125,22 @@ bot.on('messageReactionRemove', (reaction, user) => {
     this.updateLobbyMessage(reaction.message)
 })
 
+exports.updateLobbyPhase = async (newPhase, msg) => {
+    this.lobbyPhase = newPhase
+    await this.updateLobbyMessage(msg)
+}
+
 exports.updateLobbyMessage = async (msg) => {
     const lobbyMsgRef = msg.channel.messages.cache.get(this.lobbyMessageId)
-    let messageContent = `Lobby Code: ${this.lobbyId}\nCurrent Phase: ${this.lobbyStatus}\nPlease react to select your colour!\n\n`
-    this.players.map(player => messageContent += `${player.username} has selected -> ${player.colour}\n`)
-    await lobbyMsgRef.edit(messageContent)
+    const embedMessage = require('./lobbyMessage').createLobbyMessage(this.lobbyId,this.map, this.lobbyPhase)
+    await lobbyMsgRef.edit({embed: embedMessage})
+}
+
+exports.resetFields = () => {
+    this.lobbyMessageId = ""
+    this.lobbyId = ""
+    this.host = ""
+    this.Lobbyphase = ""
+    this.map = ""
 }
 

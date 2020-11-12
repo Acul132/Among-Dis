@@ -5,7 +5,7 @@ module.exports = {
     async execute(msg, args){
         //should send a message with the remaining colours that the host can click to mark as "dead"
 
-        const { players, lobbyStatus, updateLobbyStatus } = require('../bot')
+        const { players, lobbyPhase, updateLobbyPhase } = require('../bot')
         const { guild } = msg
 
         for(let player of players){
@@ -20,7 +20,7 @@ module.exports = {
             }
         }
 
-        if(lobbyStatus !== 'Discussion')
-            updateLobbyStatus('Discussion', msg)
+        if(lobbyPhase !== 'Discussion')
+        updateLobbyPhase('Discussion', msg)
     }
 }

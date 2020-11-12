@@ -3,7 +3,7 @@ module.exports = {
     description: 'Start the game',
     hostPermission: true,
     async execute(msg, args){
-        const { players, updateLobbyStatus } = require('../bot')
+        const { players, updateLobbyPhase } = require('../bot')
         const { guild } = msg
 
         for(let player of players){
@@ -15,6 +15,11 @@ module.exports = {
             }
         }
 
-        updateLobbyStatus("Playing", msg)
+        try{
+            await updateLobbyPhase("Playing", msg)
+        }
+        catch(err){
+            console.log("Error starting lobby round! " + err)
+        }
     }
 }

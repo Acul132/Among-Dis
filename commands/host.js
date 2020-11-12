@@ -17,22 +17,78 @@ module.exports = {
                 console.log(err)
             }
         }
-
-        bot.host = msg.author.id
-        bot.players = []
         
-
         if(args.length === 0 || args[0].length !== 6) throw "You must provide a 6 character lobby code in order to host a game!"
+        if(args[1] == null || !["SKELD", "POLUS", "MIRA"].includes(args[1].toUpperCase())) throw "You must provide a valid map name (SKELD, MIRA, POLUS)!"
         
+        bot.host = msg.author.id
+        // bot.players = []
+        bot.players = [{
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        },
+        {
+            id: 83729751549677568,
+            username: "Joshua",
+            colour: "LIME"
+        }]
         bot.lobbyId = args[0]
-        let messageContent = `Lobby Code: ${bot.lobbyId}\nCurrent Phase: ${bot.lobbyStatus}\nPlease react to select your colour!\n\n`
-        const playerSelect = await msg.channel.send(messageContent)
-        await playerSelect.pin({reason: 'Game Lobby'})
-        bot.lobbyMessageId = playerSelect.id
-        bot.updateLobbyStatus("Creating lobby", msg)
+        bot.map = args[1]
+        bot.phase = "Creating Lobby"
 
-        for(let colour in bot.colours){
-            await playerSelect.react(colour)
+        try{
+            const embedMessage = require('../lobbyMessage').createLobbyMessage(bot.lobbyId,bot.map)
+            const playerSelect = await msg.channel.send({embed: embedMessage})
+            await playerSelect.pin({reason: 'Game Lobby'})
+            bot.lobbyMessageId = playerSelect.id
+
+            for(let colour in bot.coloursById){
+                await playerSelect.react(colour)
+            }
+        }
+        catch(err){
+            console.log(error)
         }
     }
 }
